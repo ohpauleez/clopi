@@ -1,0 +1,18 @@
+{"group-id/artifact-id" {"version" {:num-dep 0
+                                    :num-dev-dep 0}}}
+
+1.) get the urls from feed.clj
+2.) If github:
+   a.) see if there is a URL/raw/master/project.clj
+       - parse out the dep and dev-dep, add them to the map
+       - tag on the URL and leiningen information string
+
+3.) If bitbucket:
+    a.) scrape the URL/src for a project.clj link
+    b.) replace the src with raw
+    c.) fetch the file
+
+===
+
+4.) JSON encode the data
+
