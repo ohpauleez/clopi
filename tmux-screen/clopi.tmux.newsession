@@ -1,4 +1,4 @@
-new -s coopquo -nlein
+new -s clopi -nlein
 splitw -v -p 40
 neww -t 2 -nvim
 splitw -h
