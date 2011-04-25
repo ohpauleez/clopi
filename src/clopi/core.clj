@@ -41,7 +41,7 @@
 (defn dispatch-url
   "Given a url, dispatch to the correct fetch-url call"
   [url]
-  (condp .contains url
+  (condp #(.contains url %)
     "github"  (fetch-github url)
     ""        (fetch-proj-url url)))
  
