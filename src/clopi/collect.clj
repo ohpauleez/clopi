@@ -14,6 +14,6 @@
 (defn depmap
   ([] (depmap (all-urls)))
   ([urls]
-   (let [deps (map ccore/dispatch-url urls)
+   (let [deps (map (fnil ccore/dispatch-url "") urls)
          ret-depmap (ccore/count-deps deps)])))
 
