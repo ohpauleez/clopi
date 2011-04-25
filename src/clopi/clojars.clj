@@ -2,7 +2,7 @@
   (:use [clopi.core :only (gunzip)]))
 
 
-(def *feed-archive-url* "http://clojars.org/repo/feed.clj.gz")
+#_(def *feed-archive-url* "http://clojars.org/repo/feed.clj.gz")
 
 (defn istream->urls
   "Resolve the feed input stream results lazily, generating a set of all the URLS"
@@ -14,6 +14,9 @@
 
 (defn feed
   "Fetch the Clojars package feed, and process it into an input stream for consumption"
-  []
-  (gunzip *feed-archive-url*))
+  ([]
+   (feed "http://clojars.org/repo/feed.clj.gz"))
+  ([feed-url]
+   (gunzip feed-url)))
+
 
