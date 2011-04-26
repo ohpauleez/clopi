@@ -20,6 +20,11 @@
       (read-string project-map-str))
     {}))
 
+#_(for [d [:dev-dependencies :dependencies]] (update-in r [d] #(vec (for [[k v] %] [(str k) v]))))
+; that works, but merging/building is obviously not happening.
+; outer for as a reduce?
+; Eventually, they turn into strs though in count-dep-vec, so no real need here
+
 (defn fetch-proj-url
   "Fetch the dependencies and dev-dependencies of a project.clj url"
   [url]
@@ -28,8 +33,11 @@
               (catch Exception e (clojure.java.io/reader (StringReader. ""))))
         proj-map (try
                    (project->map (apply str (line-seq rdr)))
-                   (catch Exception e {}))]
-    (select-keys proj-map [:dependencies :dev-dependencies])))
+                   (catch Exception e {}))
+        deps (try
+               (select-keys proj-map [:dependencies :dev-dependencies])
+               (catch Exception e (do #_(println "ERROR:" proj-map) {:dependencies [[]], :dev-dependencies [[]]})))]
+    deps))
 
 (defn fetch-github
   "Fetch the dependencies and dev-dependencies of a github host project"
@@ -49,7 +57,8 @@
   [dep-vector stats-map-start]
   (reduce (fn [stats-map [proj-index version-str]]
             (let [proj-index (str proj-index)
-                  version-str (.replaceFirst (str version-str) "[" "")] ;sometime version come in as "[1.2.0"
+                  ;version-str (.replaceFirst (str version-str) "\\[" "")] ;sometime version come in as "[1.2.0"
+                  version-str (.replace (str version-str) "[" "")]
               (update-in stats-map [proj-index version-str] (fnil inc 0))))
           stats-map-start dep-vector))
 
@@ -60,7 +69,7 @@
             (try
               (count-dep-vec (into (get dep-map :dependencies [])
                                    (get dep-map :dev-dependencies [])) stats-map)
-              (catch Exception e (do (println dep-map) stats-map))))
+              (catch Exception e (do (println "ERROR:" dep-map) stats-map))))
           (sorted-map) deps))
 
 (defn ranked-depvec

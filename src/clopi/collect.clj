@@ -7,13 +7,14 @@
 
 (defn all-urls []
   (let [clourls (clojars/istream->urls (clojars/feed))
-        giturls (github/repos->urls (github/clojure-repos))
-        ret-urls (into clourls giturls)]
-    ret-urls))
+        giturls (github/repos->urls (github/clojure-repos))]
+    (into clourls giturls)))
 
 (defn depmap
   ([] (depmap (all-urls)))
   ([urls]
-   (let [deps (map (fnil ccore/dispatch-url "") urls)
-         ret-depmap (ccore/count-deps deps)])))
+   (let [deps (map #(do
+                      (Thread/sleep 1000)
+                      ((fnil ccore/dispatch-url "") %)) urls)]
+     (ccore/count-deps deps))))
 
