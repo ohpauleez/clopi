@@ -16,14 +16,18 @@
       (str gn)
       (str gn "/" jn))))
 
+(defn augment-result [final-res res depmap]
+  (let [deps (get (depmap (clojars->depmap res)) (res "version") 0)]
+    (conj final-res (assoc res "deps" deps))))
+
 (defn augment-search
   "Perform a search query, but augment the results with a given depmap"
   ([query depmap ranked?]
-   (let [res (augment-search query depmap)]
-     #_(sort #() res)))
+   (if ranked?
+     (sort #(> (%1 "deps") (%2 "deps")) (augment-search query depmap))
+     (augment-search query depmap)))
   ([query depmap]
    (let [res (clojars-search query)
-         ;; TODO depmap is currently a seq of vectors eg: ["aleph" {"0.1.5-SNAPSHOT" 2, "0.1.0-SNAPSHOT" 1}], and below doesn't contain/use version info
-         res_aug (reduce #(conj %1 (assoc %2 "deps" (depmap (clojars->depmap %2)))) [] res)]
+         res_aug (reduce #(augment-result %1 %2 depmap) [] res)]
      res_aug)))
 
