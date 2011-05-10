@@ -33,6 +33,15 @@ TODO
 TODO
 ====
 
+* Create necessary features for web based and API based search (rank score by dep count)
+* Augment search results with Github or BitBucket activity
+* Integrate clojure metrics project, to also include basic metrics
+* Allow search filtering (eg: nothing depends on it, has more than 10k lines)
+ * If nothing depends on it, and it doesn't share a name with another project, it's an application
+ * If nothing depends on it, and it shares a name of something that has nothing depends on, it's a forked application
+ * If nothing depends on it, but it shares a name of something that things depend on, it's a forked lib
+ * If things depend on it, it's a library
+
 
 Hacking
 =======
